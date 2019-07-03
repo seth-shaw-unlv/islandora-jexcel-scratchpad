@@ -9,7 +9,7 @@ function updateDropdown(dropdown, termsPrefix, ...vocabs){
       })
       .then(function(jsonapiResponse) {
         jsonapiResponse.data.forEach(function(term) {
-          // Don't add the term if the Term ID already exists in the dropdown.
+          // Add the term if it is NOT already in the dropdown.
           if (dropdown.findIndex(existingTerm => existingTerm.id === term.attributes.drupal_internal__tid) === -1) {
             term = {
               'name': term.attributes.name,
@@ -27,7 +27,7 @@ function updateDropdown(dropdown, termsPrefix, ...vocabs){
 // Eventually this will be dynamically loaded either with a list of files to
 // describe, an initial spreadsheet, or nodes from Drupal to update.
 var data = [
-    //['Thumbnail','File','Title','Date','Description','Rights','Extent','Access Terms','Member Of','Node ID'],
+    //['Thumbnail','File','Title','Date','Description','Rights','Extent','Subjects','Access Terms','Member Of','Node ID'],
     ['','myfile.jpg','My nice image','2019-07-01?','A fine image, yes?','Do whatever you want with it.','There\'s only one image.','','Anonymous','',''],
     [],
 ];
