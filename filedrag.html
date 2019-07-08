@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Test jExcel for Islandora Workbench</title>
+
+    <script src="https://bossanova.uk/jexcel/v3/jexcel.js"></script>
+    <script src="https://bossanova.uk/jsuites/v2/jsuites.js"></script>
+    <script src="papaparse.js"></script>
+
+    <link rel="stylesheet" href="https://bossanova.uk/jsuites/v2/jsuites.css" type="text/css" />
+    <link rel="stylesheet" href="https://bossanova.uk/jexcel/v3/jexcel.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Material+Icons" />
+    <link rel='stylesheet' type="text/css" href="filedrag.css" />
+  </head>
+  <body>
+    <h1>Testing <a href="https://bossanova.uk/jexcel/v3/">jExcel</a> for <a href="https://github.com/mjordan/islandora_workbench">Islandora Workbench</a></h1>
+
+    <form id='submit_spreadsheet'>
+      <fieldset>
+        <legend>Load Files</legend>
+        <div>
+          <label for='fileselect'>Select Files or Directory to Load:</label>
+          <input type='file' id='fileselect' name='fileselect' webkitdirectory multiple/>
+          <div id='filedrag'>or drop here.</div>
+        </div>
+        <div id='submitbutton'>
+          <button type='submit'>Load</button>
+        </div>
+      </fieldset>
+    </form>
+
+    <h2>The Spreadsheet</h2>
+    <div id="spreadsheet"></div>
+    <script src="initialize.js"></script>
+
+    <h2>Notes</h2>
+    <p>
+      The <a href="https://developer.mozilla.org/en-US/docs/Web/API/File/webkitRelativePath">webkitRelative path property of the File API</a> only works in Chrome, Edge, and Firefox. Switch to using <a href="https://electronjs.org/docs/api/file-object">Electon's path attribute extension</a> once we have the Electron skeleton in place.
+    </p>
+
+  </body>
+  <script src="filedrag.js"></script>
+</html>
