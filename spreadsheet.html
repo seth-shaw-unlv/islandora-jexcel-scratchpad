@@ -6,6 +6,8 @@
 
     <script src="https://bossanova.uk/jexcel/v3/jexcel.js"></script>
     <script src="https://bossanova.uk/jsuites/v2/jsuites.js"></script>
+    <script src="initialize.js"></script>
+
     <link rel="stylesheet" href="https://bossanova.uk/jsuites/v2/jsuites.css" type="text/css" />
     <link rel="stylesheet" href="https://bossanova.uk/jexcel/v3/jexcel.css" type="text/css" />
 
@@ -17,7 +19,18 @@
     <h2>The Spreadsheet</h2>
 
     <div id="spreadsheet"></div>
-    <script src="initialize.js"></script>
+    <script>
+    // The data to load into the spreadsheet.
+    // Dummy data for now.
+    // Eventually this will be dynamically loaded either with a list of files to
+    // describe, an initial spreadsheet, or nodes from Drupal to update.
+    loadData([
+        //['Thumbnail','File','Title','Date','Description','Rights','Extent','Subjects','Access Terms','Member Of','Node ID'],
+        ['','myfile.jpg','My nice image','2019-07-01?','A fine image, yes?','Do whatever you want with it.','There\'s only one image.','','Anonymous','',''],
+        [],
+    ]);
+
+    </script>
 
     <h2>Notes</h2>
     <p>
