@@ -219,6 +219,11 @@ function loadContentType() {
             return a.weight - b.weight;
         });
         columns.unshift({
+            type: 'text',
+            title: 'Original File Path',
+            width: 120
+        });
+        columns.unshift({
             type: 'image',
             title: 'Thumbnail',
             width: 120
