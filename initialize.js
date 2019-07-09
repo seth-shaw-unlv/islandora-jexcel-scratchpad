@@ -23,9 +23,7 @@ let widgetMap = {
 function updateDropdown(dropdown, termsPrefix, ...vocabs) {
     vocabs.forEach(function (vocab) {
         fetch(termsPrefix + vocab)
-            .then(function (response) {
-                return response.json();
-            })
+            .then( (response) => response.json() )
             .then(function (jsonapiResponse) {
                 jsonapiResponse.data.forEach(function (term) {
                     // Add the term if it is NOT already in the dropdown.
@@ -44,9 +42,7 @@ function updateDropdown(dropdown, termsPrefix, ...vocabs) {
 // Populate content types dropdown
 function listContentTypes() {
     fetch(jsonApiPrefix + 'node_type/node_type')
-        .then(function (response) {
-            return response.json();
-        })
+        .then( (response) => response.json() )
         .then(function (jsonapiResponse) {
             select = document.getElementById('content_type_select');
             jsonapiResponse.data.forEach(function (contentType) {
@@ -201,12 +197,8 @@ function loadContentType() {
     let formFields = fetch(jsonApiPrefix + 'entity_form_display/entity_form_display?filter[type][condition][path]=bundle&filter[type][condition][value]=' + contentType, {
             headers: jsonApiHeaders
         })
-        .then(function (response) {
-            return response.json();
-        })
-        .then(function (jsonapiResponse) {
-            return jsonapiResponse.data[0].attributes.content;
-        });
+        .then( (response) => response.json() )
+        .then( (jsonapiResponse) => jsonapiResponse.data[0].attributes.content );
 
     // TODO: Add core field overrides to field Settings.
 
@@ -230,9 +222,7 @@ function loadContentType() {
     let fieldSettings = fetch(jsonApiPrefix + 'field_config/field_config?filter[type][condition][path]=bundle&filter[type][condition][value]=' + contentType, {
             headers: jsonApiHeaders
         })
-        .then(function (response) {
-            return response.json();
-        })
+        .then( (response) => response.json() )
         .then(function (jsonapiResponse) {
             let fields = {};
             jsonapiResponse.data.forEach(function (field) {
