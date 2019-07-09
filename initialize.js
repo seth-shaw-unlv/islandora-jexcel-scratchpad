@@ -82,6 +82,8 @@ function loadData(data, columns) {
             // Odd row colours
             if ( (row % 2) !== 0 ) {
                 cell.style.backgroundColor = '#edf3ff';
+            } else {
+                cell.style.backgroundColor = '#ffffff'
             }
         },
         toolbar: [{
