@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Test jExcel for Islandora Workbench</title>
+
+    <script src="https://bossanova.uk/jexcel/v3/jexcel.js"></script>
+    <script src="https://bossanova.uk/jsuites/v2/jsuites.js"></script>
+    <script src="initialize.js"></script>
+
+    <link rel="stylesheet" href="https://bossanova.uk/jsuites/v2/jsuites.css" type="text/css" />
+    <link rel="stylesheet" href="https://bossanova.uk/jexcel/v3/jexcel.css" type="text/css" />
+
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Material+Icons" />
+    <link rel='stylesheet' type="text/css" href="filedrag.css" />
+    <style>
+      .jexcel thead tr td {
+        text-transform: capitalize;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Testing <a href="https://bossanova.uk/jexcel/v3/">jExcel</a> for <a href="https://github.com/mjordan/islandora_workbench">Islandora Workbench</a></h1>
+
+    <h2>Setup Spreadsheet</h2>
+    <form id='load_content_type' action='#'>
+      <fieldset>
+          <legend>Load Content Type</legend>
+          <label for='content_type_select'>Select Content Type to load:</label>
+          <select id='content_type_select'></select>
+          <script type="text/javascript">listContentTypes()</script>
+          <button onclick="loadContentType()">Load</button>
+      </fieldset>
+    </form>
+
+    <form id='load_files'>
+      <fieldset>
+        <legend>Load Files</legend>
+        <div>
+          <label for='fileselect'>Select Files or Directory to Load:</label>
+          <input type='file' id='fileselect' name='fileselect' webkitdirectory multiple/>
+          <div id='filedrag'>or drop here.</div>
+        </div>
+        <div id='submitbutton'>
+          <button type='submit'>Load</button>
+        </div>
+      </fieldset>
+    </form>
+
+    <h2>The Spreadsheet</h2>
+
+    <div id="spreadsheet"><em>No spreadsheet has been loaded yet.</em></div>
+
+    <h2>Notes</h2>
+    <p>
+      Currently assumes you have an Islandora instance accessible at <a href="http://localhost:8000/">localhost:8000</a> that has JSON:API and CORS (see below) enabled with some existing <a href="https://github.com/Islandora-CLAW/controlled_access_terms">Controlled Access Terms</a> populated.
+    </p>
+
+    <p>
+      The <a href="https://developer.mozilla.org/en-US/docs/Web/API/File/webkitRelativePath">webkitRelative path property of the File API</a> only works in Chrome, Edge, and Firefox. Switch to using <a href="https://electronjs.org/docs/api/file-object">Electon's path attribute extension</a> once we have the Electron skeleton in place.
+    </p>
+
+    <p>
+      Initially my browser refused to load the dropdown boxes from Drupal due to
+      <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS">Cross-Origin Resource Sharing (CORS)</a>.
+      A bit of searching lead me to <a href="https://drupal.stackexchange.com/questions/245903/how-do-i-set-up-cors">a forum post</a>
+      indicating that I needed to configure my site's services.yml to enable CORS.
+      There may be a way to do it without this, but it is what I have right now.
+    </p>
+
+  </body>
+  <script src="filedrag1.js"></script>
+</html>

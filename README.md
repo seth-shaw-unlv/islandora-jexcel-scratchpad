@@ -7,3 +7,4 @@
 - [Import CSV](papaparse.html) - Explores loading from a spreadsheet. (Still a lot to do here; could use an Excel-like import wizard to work really well.)
 - [Load files](filedrag.html) - Explores populating a spreadsheet from a list of files on the user's computer. (Works best on Chrome; waiting for the Electron app skeleton.)
 - [Load from Drupal Content Type](load_content_type.html) - Explores building an empty spreadsheet based on the entity's form display. (Assumes JSON:API is enabled on a site located at localhost:8000.)
+- [Load Content Type and File List](combined.html) - Combines the "load files" and "load Drupal content type" examples above.

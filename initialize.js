@@ -8,6 +8,8 @@ let jsonApiPrefix = 'http://localhost:8000/jsonapi/';
 let jsonApiHeaders = new Headers();
 jsonApiHeaders.append('Authorization', 'Basic ' + btoa('admin' + ':' + 'islandora'));
 
+let currentColumnDefinition = [];
+
 let widgetMap = {
     // Only includes non-text items.
     boolean_checkbox: 'checkbox',
@@ -64,6 +66,7 @@ function loadData(data, columns) {
     // Reset the sheet.
     spreadsheetDiv = document.getElementById('spreadsheet');
     spreadsheetDiv.innerHTML = '';
+    currentColumnDefinition = columns;
 
     // Column alignments, first (thumbnail) is centered, the rest are left.
     colAlignments = Array(columns.length - 1).fill('left');
@@ -219,11 +222,13 @@ function loadContentType() {
             return a.weight - b.weight;
         });
         columns.unshift({
+            id: 'local_path_original',
             type: 'text',
             title: 'Original File Path',
             width: 120
         });
         columns.unshift({
+            id: 'local_thumbnail',
             type: 'image',
             title: 'Thumbnail',
             width: 120
