@@ -9,20 +9,20 @@ var widgetMap = {
     entity_reference_autocomplete: 'autocomplete',
     number: 'numeric',
     options_buttons: 'dropdown',
-    options_select: 'dropdown'
+    options_select: 'dropdown',
 };
 
 // Function to load dropdown boxes with Taxonomy terms.
 // TODO: sort the terms after an update.
 // TODO: jsonapi pagination support
 function updateDropdown(dropdown, termsPrefix, ...vocabs) {
-    vocabs.forEach(function(vocab) {
+    vocabs.forEach(function (vocab) {
         fetch(termsPrefix + vocab)
-            .then(function(response) {
+            .then(function (response) {
                 return response.json();
             })
-            .then(function(jsonapiResponse) {
-                jsonapiResponse.data.forEach(function(term) {
+            .then(function (jsonapiResponse) {
+                jsonapiResponse.data.forEach(function (term) {
                     // Add the term if it is NOT already in the dropdown.
                     if (dropdown.findIndex(existingTerm => existingTerm.id === term.attributes.drupal_internal__tid) === -1) {
                         term = {
@@ -39,12 +39,12 @@ function updateDropdown(dropdown, termsPrefix, ...vocabs) {
 // Populate content types dropdown
 function listContentTypes() {
     fetch(jsonApiPrefix + 'node_type/node_type')
-        .then(function(response) {
+        .then(function (response) {
             return response.json();
         })
-        .then(function(jsonapiResponse) {
+        .then(function (jsonapiResponse) {
             select = document.getElementById('content_type_select');
-            jsonapiResponse.data.forEach(function(contentType) {
+            jsonapiResponse.data.forEach(function (contentType) {
                 select.options[select.options.length] = new Option(contentType.attributes.name, contentType.attributes.drupal_internal__type);
             })
         });
@@ -137,7 +137,7 @@ function loadData(data, columns = [ // TODO: Make configurable based on Drupal C
         // search:true, // https://github.com/paulhodel/jexcel/issues/418#event-2458477505
         columns: columns,
         colAlignments: colAlignments,
-        updateTable: function(instance, cell, col, row, val, label, cellName) {
+        updateTable: function (instance, cell, col, row, val, label, cellName) {
             // Odd row colours
             if (row % 2) {
                 cell.style.backgroundColor = '#edf3ff';
@@ -146,21 +146,21 @@ function loadData(data, columns = [ // TODO: Make configurable based on Drupal C
         toolbar: [{
                 type: 'i',
                 content: 'undo',
-                onclick: function() {
+                onclick: function () {
                     spreadsheet.undo();
                 }
             },
             {
                 type: 'i',
                 content: 'redo',
-                onclick: function() {
+                onclick: function () {
                     spreadsheet.redo();
                 }
             },
             {
                 type: 'i',
                 content: 'save',
-                onclick: function() {
+                onclick: function () {
                     spreadsheet.download();
                 }
             },
@@ -196,10 +196,10 @@ function loadContentType() {
     let formFields = fetch(jsonApiPrefix + 'entity_form_display/entity_form_display?filter[type][condition][path]=bundle&filter[type][condition][value]=' + contentType, {
             headers: jsonApiHeaders
         })
-        .then(function(response) {
+        .then(function (response) {
             return response.json();
         })
-        .then(function(jsonapiResponse) {
+        .then(function (jsonapiResponse) {
             return jsonapiResponse.data[0].attributes.content;
         });
 
@@ -207,12 +207,12 @@ function loadContentType() {
     let fieldSettings = fetch(jsonApiPrefix + 'field_config/field_config?filter[type][condition][path]=bundle&filter[type][condition][value]=' + contentType, {
             headers: jsonApiHeaders
         })
-        .then(function(response) {
+        .then(function (response) {
             return response.json();
         })
-        .then(function(jsonapiResponse) {
+        .then(function (jsonapiResponse) {
             let fields = {};
-            jsonapiResponse.data.forEach(function(field) {
+            jsonapiResponse.data.forEach(function (field) {
                 fields[field.attributes.field_name] = {
                     displayName: field.attributes.label,
                     required: field.attributes.required,
@@ -223,7 +223,7 @@ function loadContentType() {
             return fields;
         });
 
-    Promise.all([formFields, fieldSettings]).then(function(promises) {
+    Promise.all([formFields, fieldSettings]).then(function (promises) {
         formFields = promises[0];
         fieldSettings = promises[1];
         console.log('Form Fields', formFields);
