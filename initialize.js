@@ -3,6 +3,7 @@
 /*jslint es6 */
 /*global Headers, btoa*/
 
+// TODO: make URL and Authentication configurable.
 let jsonApiPrefix = 'http://localhost:8000/jsonapi/';
 let jsonApiHeaders = new Headers();
 jsonApiHeaders.append('Authorization', 'Basic ' + btoa('admin' + ':' + 'islandora'));
@@ -59,71 +60,7 @@ let accessDropdown = [];
 updateDropdown(accessDropdown, jsonApiPrefix + 'taxonomy_term/', 'islandora_access');
 
 // Configure and initialize the spreadsheet.
-function loadData(data, columns = [ // TODO: Make configurable based on Drupal Content Type inspection.
-    {
-        type: 'image',
-        title: 'Thumbnail',
-        width: 120
-    },
-    {
-        type: 'text',
-        title: 'File',
-        width: 120
-    },
-    {
-        type: 'text',
-        title: 'Title',
-        width: 120,
-        wordWrap: true
-    },
-    {
-        type: 'text',
-        title: 'Date',
-        width: 120
-    },
-    {
-        type: 'text',
-        title: 'Description',
-        width: 120,
-        wordWrap: true
-    },
-    {
-        type: 'text',
-        title: 'Rights',
-        width: 120,
-        wordWrap: true
-    },
-    {
-        type: 'text',
-        title: 'Extent',
-        width: 100,
-        wordWrap: true
-    },
-    {
-        type: 'autocomplete',
-        title: 'Subjects',
-        width: 200,
-        multiple: true,
-        source: subjectsDropdown
-    },
-    {
-        type: 'dropdown',
-        title: 'Access Terms',
-        width: 200,
-        multiple: true,
-        source: accessDropdown
-    },
-    {
-        type: 'dropdown',
-        title: 'Member Of',
-        width: 120,
-        source: []
-    },
-    {
-        type: 'hidden',
-        title: 'Node ID'
-    }
-]) {
+function loadData(data, columns) {
     // Reset the sheet.
     spreadsheetDiv = document.getElementById('spreadsheet');
     spreadsheetDiv.innerHTML = '';
@@ -187,9 +124,6 @@ function loadData(data, columns = [ // TODO: Make configurable based on Drupal C
     });
 }
 
-// Test to show we can refresh a dropdown without duplicating term ids.
-// updateDropdown(subjectsDropdown, jsonApiPrefix + 'taxonomy_term/', 'subject');
-
 // Load Spreadsheet based on content type
 function loadContentType() {
     contentType = document.getElementById('content_type_select').value;
@@ -199,8 +133,6 @@ function loadContentType() {
         })
         .then( (response) => response.json() )
         .then( (jsonapiResponse) => jsonapiResponse.data[0].attributes.content );
-
-    // TODO: Add core field overrides to field Settings.
 
     let baseFieldOverrides = fetch(jsonApiPrefix + 'base_field_override/base_field_override?filter[type][condition][path]=bundle&filter[type][condition][value]=' + contentType, {
             headers: jsonApiHeaders

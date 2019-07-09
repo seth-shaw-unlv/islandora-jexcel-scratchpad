@@ -38,7 +38,71 @@ function FileSelectHandler(e) {
     data.push(row);
   };
 
-  loadData(data);
+  loadData(data, [
+      {
+          type: 'image',
+          title: 'Thumbnail',
+          width: 120
+      },
+      {
+          type: 'text',
+          title: 'File',
+          width: 120
+      },
+      {
+          type: 'text',
+          title: 'Title',
+          width: 120,
+          wordWrap: true
+      },
+      {
+          type: 'text',
+          title: 'Date',
+          width: 120
+      },
+      {
+          type: 'text',
+          title: 'Description',
+          width: 120,
+          wordWrap: true
+      },
+      {
+          type: 'text',
+          title: 'Rights',
+          width: 120,
+          wordWrap: true
+      },
+      {
+          type: 'text',
+          title: 'Extent',
+          width: 100,
+          wordWrap: true
+      },
+      {
+          type: 'autocomplete',
+          title: 'Subjects',
+          width: 200,
+          multiple: true,
+          source: subjectsDropdown
+      },
+      {
+          type: 'dropdown',
+          title: 'Access Terms',
+          width: 200,
+          multiple: true,
+          source: accessDropdown
+      },
+      {
+          type: 'dropdown',
+          title: 'Member Of',
+          width: 120,
+          source: []
+      },
+      {
+          type: 'hidden',
+          title: 'Node ID'
+      }
+  ]);
 
 }
 
