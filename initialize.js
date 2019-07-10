@@ -75,7 +75,7 @@ function loadData(data, columns) {
     // Load the spreadsheet.
     spreadsheet = jexcel(spreadsheetDiv, {
         data: data,
-        // search:true, // https://github.com/paulhodel/jexcel/issues/418#event-2458477505
+        search: true,
         columns: columns,
         colAlignments: colAlignments,
         updateTable: function (instance, cell, col, row, val, label, cellName) {
@@ -83,7 +83,7 @@ function loadData(data, columns) {
             if ( (row % 2) !== 0 ) {
                 cell.style.backgroundColor = '#edf3ff';
             } else {
-                cell.style.backgroundColor = '#ffffff'
+                cell.style.backgroundColor = '#ffffff';
             }
         },
         toolbar: [{
@@ -125,7 +125,13 @@ function loadData(data, columns) {
                 k: 'text-align',
                 v: 'right'
             }
-        ]
+        ],
+        // Disallow column inserts until we can update currentColumnDefinition.
+        allowInsertColumn: false,
+        allowManualInsertColumn: false,
+        // All columns need to be present for update.
+        // We may be able to implement a column hide feature....
+        allowDeleteColumn: false
     });
 }
 
