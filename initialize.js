@@ -13,11 +13,12 @@ let currentColumnDefinition = [];
 let widgetMap = {
     // Only includes non-text items.
     boolean_checkbox: 'checkbox',
-    entity_reference_autocomplete_tags: 'autocomplete',
-    entity_reference_autocomplete: 'autocomplete',
+    entity_reference: 'autocomplete',
     number: 'numeric',
     options_buttons: 'dropdown',
-    options_select: 'dropdown'
+    options_select: 'dropdown',
+    typed_relation: 'dropdown', // Eventually a custom type or handler
+    image: 'image'
 };
 
 // Function to load dropdown boxes with Taxonomy terms.
@@ -62,22 +63,13 @@ let accessDropdown = [];
 updateDropdown(accessDropdown, jsonApiPrefix + 'taxonomy_term/', 'islandora_access');
 
 // Configure and initialize the spreadsheet.
-function loadData(data, columns) {
+function loadData(data, columns = []) {
     // Reset the sheet.
     spreadsheetDiv = document.getElementById('spreadsheet');
     spreadsheetDiv.innerHTML = '';
-    currentColumnDefinition = columns;
 
-    // Column alignments, first (thumbnail) is centered, the rest are left.
-    colAlignments = Array(columns.length - 1).fill('left');
-    colAlignments.unshift('center');
-
-    // Load the spreadsheet.
-    spreadsheet = jexcel(spreadsheetDiv, {
-        data: data,
+    jexcelConfig = {
         search: true,
-        columns: columns,
-        colAlignments: colAlignments,
         updateTable: function (instance, cell, col, row, val, label, cellName) {
             // Odd row colours
             if ( (row % 2) !== 0 ) {
@@ -132,7 +124,133 @@ function loadData(data, columns) {
         // All columns need to be present for update.
         // We may be able to implement a column hide feature....
         allowDeleteColumn: false
-    });
+    };
+
+    // Set Source
+    if (Array.isArray(data)) {
+      jexcelConfig.data = data;
+      if(Array.isArray(columns) && columns.length > 1) {
+        currentColumnDefinition = columns;
+        // Column alignments, first (thumbnail) is centered, the rest are left.
+        let colAlignments = Array(columns.length - 1).fill('left');
+        colAlignments.unshift('center');
+        jexcelConfig.colAlignments = colAlignments;
+        jexcelConfig.columns = columns;
+      }
+      // Load the spreadsheet.
+      spreadsheet = jexcel(spreadsheetDiv, jexcelConfig);
+    } else if (typeof data === 'string') {
+      jexcelConfig.csv = data;
+      loadViewsFields(jexcelConfig);
+    } else {
+      alert("Could not load the provided spreadsheet data: "+String(data));
+      return false;
+    }
+
+}
+
+// Load Views Fields
+function loadViewsFields(jexcelConfig){
+  let viewFields = fetch(jsonApiPrefix + 'view/view?filter[type][condition][path]=drupal_internal__id&filter[type][condition][value]=test', {
+          headers: jsonApiHeaders
+      })
+      .then( (response) => response.json() )
+      .then( function(jsonapiResponse){
+          // console.log('View Fields', jsonapiResponse.data[0].attributes.display.default.fields);
+          console.log('View Fields', jsonapiResponse.data[0].attributes.display.default.display_options);
+          return jsonapiResponse.data[0].attributes.display.default.display_options.fields;
+      });
+
+  let baseFieldOverrides = fetch(jsonApiPrefix + 'base_field_override/base_field_override', {
+          headers: jsonApiHeaders
+      })
+      .then( (response) => response.json() )
+      .then(function (jsonapiResponse) {
+          let fields = {};
+          jsonapiResponse.data.forEach(function (field) {
+              fields[field.attributes.field_name] = {
+                  displayName: field.attributes.label,
+                  required: field.attributes.required,
+                  defaultValue: field.attributes.default_value,
+                  settings: field.attributes.settings,
+                  fieldType: field.attributes.field_type
+              };
+          });
+          return fields;
+      });
+
+  let fieldSettings = fetch(jsonApiPrefix + 'field_config/field_config', {
+          headers: jsonApiHeaders
+      })
+      .then( (response) => response.json() )
+      .then(function (jsonapiResponse) {
+          let fields = {};
+          jsonapiResponse.data.forEach(function (field) {
+              fields[field.attributes.field_name] = {
+                  displayName: field.attributes.label,
+                  required: field.attributes.required,
+                  defaultValue: field.attributes.default_value,
+                  settings: field.attributes.settings,
+                  type: field.attributes.field_type
+              };
+          });
+          return fields;
+      });
+
+  Promise.all([viewFields, baseFieldOverrides, fieldSettings]).then(function (promises) {
+      viewFields = promises[0];
+      fieldSettings = { ...promises[1], ...promises[2] };
+      console.log('View Fields', viewFields);
+      console.log('Field Settings', fieldSettings);
+
+      columns = [];
+      Object.keys(viewFields).forEach(function(field) {
+        console.log('Processing field '+field);
+            let column = {
+              id: field,
+              type: 'text',
+              title: field,
+              width: 200,
+            };
+            // The resulting fields are probably too big...
+            // if (formFields[field].settings.size > 1) {
+            //   // One character is roughly 16 pixels wide at 12pt font (http://pxtoem.com/).
+            //   column.width = formFields[field].settings.size * 16;
+            // }
+            if (field in fieldSettings) {
+                column.title = fieldSettings[field].displayName;
+                if (fieldSettings[field].type in widgetMap) {
+                  column.type = widgetMap[fieldSettings[field].type];
+                }
+                if (fieldSettings[field].type in ['text_long','string_long']) {
+                  column.wordWrap = true;
+                }
+                // Assume dropdowns and autocomplete are multiples until we
+                // are able to check field storage configs.
+                if (['autocomplete', 'dropdown'].includes(column.type)) {
+                    dropdownSource = [];
+                    column.source = dropdownSource;
+                    column.multiple = true;
+                    // TODO: We don't yet support missing target_bundles (all bundles of type).
+                    if (typeof fieldSettings[field].settings.handler_settings.target_bundles !== 'undefined') {
+                        targetType = fieldSettings[field].settings.handler.replace(/^(default:)/, '');
+                        targetBundles = Object.keys(fieldSettings[field].settings.handler_settings.target_bundles);
+                        updateDropdown(dropdownSource, jsonApiPrefix + targetType + '/', ...targetBundles);
+                    }
+                }
+            } else if (field === 'nid') {
+              column.type = 'hidden';
+            }
+            columns.push(column);
+      });
+      jexcelConfig.columns = columns;
+      // Using csv Headers will overwrite our titles;
+      // simply delete the first row after initialization.
+      // jexcelConfig.csvHeaders = false;
+      spreadsheet = jexcel(spreadsheetDiv, jexcelConfig);
+      // Deleting that first row of field machine names.
+      // spreadsheet.deleteRow(0); // Doesn't work because the CSV load won't be done by the time we hit this.
+  });
 }
 
 // Load Spreadsheet based on content type

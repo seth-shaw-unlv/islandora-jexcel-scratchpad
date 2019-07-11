@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Test jExcel for Islandora Workbench</title>
+
+    <script src="https://bossanova.uk/jexcel/v3/jexcel.js"></script>
+    <script src="https://bossanova.uk/jsuites/v2/jsuites.js"></script>
+    <script src="initialize.js"></script>
+
+    <link rel="stylesheet" href="https://bossanova.uk/jsuites/v2/jsuites.css" type="text/css" />
+    <link rel="stylesheet" href="https://bossanova.uk/jexcel/v3/jexcel.css" type="text/css" />
+
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Material+Icons" />
+  </head>
+  <body>
+    <h1>Testing <a href="https://bossanova.uk/jexcel/v3/">jExcel</a> for <a href="https://github.com/mjordan/islandora_workbench">Islandora Workbench</a></h1>
+
+    <h2>The Spreadsheet</h2>
+
+    <div id="spreadsheet"></div>
+    <script>loadData('http://localhost:8000/jexceldata');</script>
+
+    <h2>Notes</h2>
+    <p>
+      Currently assumes you have an Islandora instance accessible at <a href="http://localhost:8000/">localhost:8000</a> that has JSON:API and CORS (see below) enabled with some existing <a href="https://github.com/Islandora-CLAW/controlled_access_terms">Controlled Access Terms</a> populated.
+    </p>
+
+    <p>Assumes both the <a href="https://www.drupal.org/project/csv_serialization">csv_serialization</a>
+      and <a href="https://www.drupal.org/project/image_base64_formatter">image_base64_formatter</a>
+      modules are installed on your Drupal site with  <a href="views.view.test.yml">a REST-based view exposed as a CSV file</a>.</p>
+
+    <p>
+      <strong>Only partially works right now.</strong> I can get the thumbnail and field types to work but column titles only work by setting csvHeaders to false and then deleting the first line. Also, the CSV csv_serialization module uses a quoted string with comma delimiters for multi-valued columns rather than the semi-colons used by jExcel. I haven't found a way to convince either of them to change their behavior on this point.
+    </p>
+
+    <p>
+      Initially my browser refused to load the dropdown boxes from Drupal due to
+      <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS">Cross-Origin Resource Sharing (CORS)</a>.
+      A bit of searching lead me to <a href="https://drupal.stackexchange.com/questions/245903/how-do-i-set-up-cors">a forum post</a>
+      indicating that I needed to configure my site's services.yml to enable CORS.
+      There may be a way to do it without this, but it is what I have right now.
+    </p>
+
+  </body>
+</html>
