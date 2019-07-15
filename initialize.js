@@ -123,7 +123,8 @@ function loadData(data, columns = []) {
         allowManualInsertColumn: false,
         // All columns need to be present for update.
         // We may be able to implement a column hide feature....
-        allowDeleteColumn: false
+        allowDeleteColumn: false,
+        minSpareRows: 1
     };
 
     // Set Source
@@ -205,7 +206,7 @@ function loadViewsFields(jexcelConfig){
 
       columns = [];
       Object.keys(viewFields).forEach(function(field) {
-        console.log('Processing field '+field);
+        // console.log('Processing field '+field);
             let column = {
               id: field,
               type: 'text',
