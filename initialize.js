@@ -141,8 +141,8 @@ function loadData(data, columns = []) {
       // Load the spreadsheet.
       spreadsheet = jexcel(spreadsheetDiv, jexcelConfig);
     } else if (typeof data === 'string') {
-      jexcelConfig.csv = data;
-      loadViewsFields(jexcelConfig);
+      // jexcelConfig.csv = data;
+      loadViewsFields(data, jexcelConfig);
     } else {
       alert("Could not load the provided spreadsheet data: "+String(data));
       return false;
@@ -151,7 +151,7 @@ function loadData(data, columns = []) {
 }
 
 // Load Views Fields
-function loadViewsFields(jexcelConfig){
+function loadViewsFields(restViewURI, jexcelConfig){
   let viewFields = fetch(jsonApiPrefix + 'view/view?filter[type][condition][path]=drupal_internal__id&filter[type][condition][value]=test', {
           headers: jsonApiHeaders
       })
@@ -198,11 +198,15 @@ function loadViewsFields(jexcelConfig){
           return fields;
       });
 
-  Promise.all([viewFields, baseFieldOverrides, fieldSettings]).then(function (promises) {
+    let data = fetch(restViewURI).then( function(response) {return response.json();} );
+
+  Promise.all([viewFields, baseFieldOverrides, fieldSettings, data]).then(function (promises) {
       viewFields = promises[0];
       fieldSettings = { ...promises[1], ...promises[2] };
+      viewData = promises[3];
       console.log('View Fields', viewFields);
       console.log('Field Settings', fieldSettings);
+      console.log('View Data', viewData);
 
       columns = [];
       Object.keys(viewFields).forEach(function(field) {
@@ -212,6 +216,7 @@ function loadViewsFields(jexcelConfig){
               type: 'text',
               title: field,
               width: 200,
+              align: 'left'
             };
             // The resulting fields are probably too big...
             // if (formFields[field].settings.size > 1) {
@@ -222,6 +227,9 @@ function loadViewsFields(jexcelConfig){
                 column.title = fieldSettings[field].displayName;
                 if (fieldSettings[field].type in widgetMap) {
                   column.type = widgetMap[fieldSettings[field].type];
+                  if (['image','boolean'].includes(column.type)) {
+                    column.align = 'center';
+                  }
                 }
                 if (fieldSettings[field].type in ['text_long','string_long']) {
                   column.wordWrap = true;
@@ -244,6 +252,25 @@ function loadViewsFields(jexcelConfig){
             }
             columns.push(column);
       });
+      data = [];
+      viewData.forEach(function (sourceRow) {
+        row = [];
+        columns.forEach(function(column){
+          if(typeof column.id !== 'undefined' && typeof sourceRow[column.id] !== 'undefined') {
+            if(['dropdown','autocomplete'].includes(column.type) ){
+              row.push(sourceRow[column.id].replace(',', ';').replace(' ', ''));
+            } else {
+              row.push(sourceRow[column.id]);
+            }
+          } else {
+            row.push('');
+          }
+        });
+        data.push(row);
+      });
+      console.log('Processed Columns', columns);
+      console.log('Processed data', data);
+      jexcelConfig.data = data;
       jexcelConfig.columns = columns;
       // Using csv Headers will overwrite our titles;
       // simply delete the first row after initialization.

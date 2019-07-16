@@ -26,13 +26,15 @@
       Currently assumes you have an Islandora instance accessible at <a href="http://localhost:8000/">localhost:8000</a> that has JSON:API and CORS (see below) enabled with some existing <a href="https://github.com/Islandora-CLAW/controlled_access_terms">Controlled Access Terms</a> populated.
     </p>
 
-    <p>Assumes both the <a href="https://www.drupal.org/project/csv_serialization">csv_serialization</a>
-      and <a href="https://www.drupal.org/project/image_base64_formatter">image_base64_formatter</a>
-      modules are installed on your Drupal site with  <a href="views.view.test.yml">a REST-based view exposed as a CSV file</a>.</p>
+    <p>Assumes <del>both the <a href="https://www.drupal.org/project/csv_serialization">csv_serialization</a>
+      and</del> <a href="https://www.drupal.org/project/image_base64_formatter">image_base64_formatter</a>
+      module<del>s are</del><ins>is</ins> installed on your Drupal site with  <a href="views.view.test.yml">a REST-based view exposed as <del>a CSV file</del><ins>json</ins></a>.</p>
 
     <p>
-      <strong>Only partially works right now.</strong> I can get the thumbnail and field types to work<del> but column titles only work by setting csvHeaders to false and then deleting the first line</del>. <ins></a href="https://github.com/paulhodel/jexcel/pull/441">Column titles now work</a>.</ins> The CSV csv_serialization module uses a quoted string with comma delimiters for multi-valued columns rather than the semi-colons used by jExcel. I haven't found a simple way to convince either of them to change their behavior on this point without PRs.
+      <strong>Only partially works right now.</strong> I can get the thumbnail and field types to work<del> but column titles only work by setting csvHeaders to false and then deleting the first line</del>. <ins></a href="https://github.com/paulhodel/jexcel/pull/441">Column titles now work</a>.</ins> <del>The CSV csv_serialization module uses a quoted string with comma delimiters for multi-valued columns rather than the semi-colons used by jExcel. I haven't found a simple way to convince either of them to change their behavior on this point without PRs.</del><ins>The csv_serialization module wasn't working well with multi-valued cells (and it has gotten very little support over the past year) so I decided to simply parse the response json into the jExcel data structure myself. However, it currently assumes all the results in a single request; I need to explore using jExcel's lazy loading to see if I can pre-process additional pages and implement the pagination (using the "full pager" setting; simply add "?page=n" where n is an incrementor with zero-index counting).</ins>
     </p>
+    
+    <p>Oddly, dropdowns and autocompletes are not displaying their values on table load. If I double-click the field they appear and using the fill handle will copy their values. <a href="autocomplete_bug.html">Smaller tests worked just fine</a>, so I'm not sure what is wrong with this one. I may need to use the onload function to kick start the field display for those columns.</p>
 
     <p>
       Initially my browser refused to load the dropdown boxes from Drupal due to
