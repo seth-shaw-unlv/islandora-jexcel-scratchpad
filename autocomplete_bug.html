@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Test jExcel for Islandora Workbench</title>
+
+    <script src="https://bossanova.uk/jexcel/v3/jexcel.js"></script>
+    <script src="https://bossanova.uk/jsuites/v2/jsuites.js"></script>
+    <script src="initialize.js"></script>
+
+    <link rel="stylesheet" href="https://bossanova.uk/jsuites/v2/jsuites.css" type="text/css" />
+    <link rel="stylesheet" href="https://bossanova.uk/jexcel/v3/jexcel.css" type="text/css" />
+
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Material+Icons" />
+  </head>
+  <body>
+    <h1>Testing <a href="https://bossanova.uk/jexcel/v3/">jExcel</a> for <a href="https://github.com/mjordan/islandora_workbench">Islandora Workbench</a></h1>
+
+    <h2>The Spreadsheet</h2>
+
+    <div id="spreadsheet"></div>
+    <script>
+    autoSource = [ {'id':'1', 'name':'Fruits'}, {'id':'2', 'name':'Legumes'}, {'id':'3', 'name':'General Food'} ];
+    loadData([
+        ['Test 2','2;3','2;3'],
+        ['Test 2','1','1'],
+        [],
+    ], [
+        {
+            type: 'text',
+            title: 'Title',
+            width: 120,
+            wordWrap: true
+        },
+        {
+            type: 'autocomplete',
+            title: 'Test 1',
+            width: 200,
+            multiple: true,
+            source: autoSource
+        },
+        {
+            type: 'dropdown',
+            title: 'Test 2',
+            width: 200,
+            multiple: true,
+            source: [ {'id':'1', 'name':'Fruits'}, {'id':'2', 'name':'Legumes'}, {'id':'3', 'name':'General Food'} ]
+        }
+    ]);
+
+    </script>
+
+    <h2>Notes</h2>
+
+  </body>
+</html>
