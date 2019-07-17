@@ -11,21 +11,21 @@
   <body>
     <div id="spreadsheet"></div>
     <script>
-    // autoSource = [ {'id':'27', 'name':'Fruits'}, {'id':'28', 'name':'Legumes'}, {'id':'29', 'name':'General Food'} ];
-    autoSource = [ {id:'27',name:'Fruits'} ];
+    // autoSource = [ {'id':'1', 'name':'Fruits'}, {'id':'2', 'name':'Legumes'}, {'id':'3', 'name':'General Food'} ];
+    autoSource = [ {id:'1',name:'Fruits'} ];
     spreadsheetDiv = document.getElementById('spreadsheet');
 
     spreadsheet = jexcel(spreadsheetDiv, {
         data: [
-                  ['Displays because value is in source already.','27'],
-                  ['Only "Fruits" displays at first. "Legumes" will appear after envoking the dropdown.','27;28'],
-                  ['"General Food will appear after envoking the dropdown."','29'],
+                  ['Displays correctly because value is in source already.','1'],
+                  ['Only "Fruits" displays at first. "Legumes" will appear after envoking the dropdown.','1;2'],
+                  ['"General Food will appear after envoking the dropdown."','3'],
               ],
         columns: [
                     {
                         type: 'text',
                         title: 'Title',
-                        width: 120,
+                        width: 400,
                         wordWrap: true,
                         align: 'left'
                     },
@@ -40,8 +40,8 @@
         minSpareRows: 1
     });
     //Mocking an async addition of dropdown values.
-    autoSource.push({'id':'28', 'name':'Legumes'});
-    autoSource.push({'id':'29', 'name':'General Food'});
+    autoSource.push({'id':'2', 'name':'Legumes'});
+    autoSource.push({'id':'3', 'name':'General Food'});
     
     // Example Async load of the dropdown. Even if the fetch is initiated before
     // the spreadsheet is, the fetch is still slow enough that the dropdown 
