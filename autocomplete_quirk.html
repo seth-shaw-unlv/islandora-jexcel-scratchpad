@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Test jExcel Dropdown Quirk</title>
+    <script src="https://bossanova.uk/jexcel/v3/jexcel.js"></script>
+    <script src="https://bossanova.uk/jsuites/v2/jsuites.js"></script>
+    <link rel="stylesheet" href="https://bossanova.uk/jsuites/v2/jsuites.css" type="text/css" />
+    <link rel="stylesheet" href="https://bossanova.uk/jexcel/v3/jexcel.css" type="text/css" />
+  </head>
+  <body>
+    <div id="spreadsheet"></div>
+    <script>
+    // autoSource = [ {'id':'27', 'name':'Fruits'}, {'id':'28', 'name':'Legumes'}, {'id':'29', 'name':'General Food'} ];
+    autoSource = [ {id:'27',name:'Fruits'} ];
+    spreadsheetDiv = document.getElementById('spreadsheet');
+
+    spreadsheet = jexcel(spreadsheetDiv, {
+        data: [
+                  ['Displays because value is in source already.','27'],
+                  ['Only "Fruits" displays at first. "Legumes" will appear after envoking the dropdown.','27;28'],
+                  ['"General Food will appear after envoking the dropdown."','29'],
+              ],
+        columns: [
+                    {
+                        type: 'text',
+                        title: 'Title',
+                        width: 120,
+                        wordWrap: true,
+                        align: 'left'
+                    },
+                    {
+                        type: 'autocomplete',
+                        title: 'Test 1',
+                        width: 200,
+                        multiple: true,
+                        source: autoSource
+                    }
+                ],
+        minSpareRows: 1
+    });
+    //Mocking an async addition of dropdown values.
+    autoSource.push({'id':'28', 'name':'Legumes'});
+    autoSource.push({'id':'29', 'name':'General Food'});
+    
+    // Example Async load of the dropdown. Even if the fetch is initiated before
+    // the spreadsheet is, the fetch is still slow enough that the dropdown 
+    // additions will appear in the array after the spreadsheet is.
+    // fetch('http://localhost:8000/jsonapi/taxonomy_term/subject')
+    //     .then( (response) => response.json() )
+    //     .then(function (terms) {
+    //         terms.data.forEach(function (term) {
+    //             // Add the term if it is NOT already in the dropdown.
+    //             if (autoSource.findIndex( (existingTerm) => existingTerm.id === term.attributes.drupal_internal__tid) === -1) {
+    //                 term = {
+    //                     'name': term.attributes.name,
+    //                     'id': term.attributes.drupal_internal__tid
+    //                 };
+    //                 autoSource.push(term);
+    //             }
+    //         });
+    //     });
+    </script>
+  </body>
+</html>
