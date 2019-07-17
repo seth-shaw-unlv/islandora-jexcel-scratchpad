@@ -43,9 +43,10 @@
     autoSource.push({'id':'2', 'name':'Legumes'});
     autoSource.push({'id':'3', 'name':'General Food'});
     
-    // Example Async load of the dropdown. Even if the fetch is initiated before
-    // the spreadsheet is, the fetch is still slow enough that the dropdown 
-    // additions will appear in the array after the spreadsheet is.
+    // Example Async load of the dropdown. Even if the fetch is initiated 
+    // at the top of the script, before the spreadsheet is, the fetch is still
+    // slow enough that the dropdown additions will appear in the array after 
+    // the spreadsheet is.
     // fetch('http://localhost:8000/jsonapi/taxonomy_term/subject')
     //     .then( (response) => response.json() )
     //     .then(function (terms) {
