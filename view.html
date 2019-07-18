@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Test jExcel for Islandora Workbench</title>
+
+    <script src="jexcel.js"></script>
+    <script src="https://bossanova.uk/jsuites/v2/jsuites.js"></script>
+    <script src="initialize.js"></script>
+
+    <link rel="stylesheet" href="https://bossanova.uk/jsuites/v2/jsuites.css" type="text/css" />
+    <link rel="stylesheet" href="https://bossanova.uk/jexcel/v3/jexcel.css" type="text/css" />
+
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Material+Icons" />
+    <style>
+    /* Courtesy of https://codeburst.io/how-to-create-a-simple-css-loading-spinner-make-it-accessible-e5c83c2e464c */
+    @keyframes spinner {
+        0% {
+            transform: translate3d(-50%, -50%, 0) rotate(0deg);
+        }
+        100% {
+             transform: translate3d(-50%, -50%, 0) rotate(360deg);
+        }
+    }
+    .spinner {
+        height: 100vh;  
+        position: relative;
+        transition: opacity linear 0.1s; 
+    }
+    .spinner::before {
+        animation: 2s linear infinite spinner;
+        border: solid 3px #eee;
+        border-bottom-color: #EF6565;
+        border-radius: 50%;
+        content: "";
+        height: 40px;
+        left: 25%;
+        position: absolute;
+        /* top: 50%; */
+        transform: translate3d(-50%, -50%, 0);
+        transform-origin: center;
+        width: 40px;
+        will-change: transform;
+    }
+    </style>
+  </head>
+  <body>
+    <h1>Testing <a href="https://bossanova.uk/jexcel/v3/">jExcel</a> for <a href="https://github.com/mjordan/islandora_workbench">Islandora Workbench</a></h1>
+
+    <h2>The Spreadsheet</h2>
+
+    <div id="spreadsheet" role="alert" aria-live="assertive"><div class="spinner"><p class="js-loading-spinner">Loading the spreadsheet. Please wait...</p></div></div>
+
+    <h2>Notes</h2>
+    <p>
+      Currently assumes you have an Islandora instance accessible at <a href="http://localhost:8000/">localhost:8000</a> that has JSON:API and CORS (see below) enabled with some existing <a href="https://github.com/Islandora-CLAW/controlled_access_terms">Controlled Access Terms</a> populated.
+    </p>
+
+    <p>Assumes <del>both the <a href="https://www.drupal.org/project/csv_serialization">csv_serialization</a>
+      and</del> <a href="https://www.drupal.org/project/image_base64_formatter">image_base64_formatter</a>
+      module<del>s are</del><ins>is</ins> installed on your Drupal site with
+      <a href="views.view.test.yml">a REST-based view exposed as <del>a CSV file</del> <ins>json</ins></a>.</p>
+
+    <p>
+      <strong>Only partially works right now.</strong> I can get the thumbnail and field types to work<del> but column titles only work by setting csvHeaders to false and then deleting the first line</del>. <ins></a href="https://github.com/paulhodel/jexcel/pull/441">Column titles now work</a>.</ins> <del>The CSV csv_serialization module uses a quoted string with comma delimiters for multi-valued columns rather than the semi-colons used by jExcel. I haven't found a simple way to convince either of them to change their behavior on this point without PRs.</del><ins>The csv_serialization module wasn't working well with multi-valued cells (and it has gotten very little support over the past year) so I decided to simply parse the response json into the jExcel data structure myself. However, it currently assumes all the results in a single request; I need to explore using jExcel's lazy loading to see if I can pre-process additional pages and implement the pagination (using the "full pager" setting; simply add "?page=n" where n is an incrementor with zero-index counting).</ins>
+    </p>
+    
+    <p><del>Oddly, dropdowns and autocompletes are not displaying their values on table load. If I double-click the field they appear and using the fill handle will copy their values.</del>
+      <ins>Fixed:</ins>
+      <a href="autocomplete_quirk.html">Testing</a> indicated that any dropdown/autocomplete values that don't exist in the source array at render time won't show up (which makes sense).
+      Simply adding values to the source array won't trigger re-renders. I submitted a <a href="https://github.com/paulhodel/jexcel/issues/454">ticket about triggering re-renders</a>
+      and the advice boiled down to "don't render the table until the dropdowns populate".
+      (I still think there should be an easy way to trigger re-renders...)
+      So, now the updateDropdown function returns an array of promises that I can gather up and wait until they all complete before the table render happens. 
+      I've added a spinner in case this takes a long time but my tests have been too quick for it to display.
+    </p>
+
+    <p>
+      Initially my browser refused to load the dropdown boxes from Drupal due to
+      <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS">Cross-Origin Resource Sharing (CORS)</a>.
+      A bit of searching lead me to <a href="https://drupal.stackexchange.com/questions/245903/how-do-i-set-up-cors">a forum post</a>
+      indicating that I needed to configure my site's services.yml to enable CORS.
+      There may be a way to do it without this, but it is what I have right now.
+    </p>
+
+  </body>
+  <script>loadData('http://localhost:8000/jexceldata');</script>
+</html>
