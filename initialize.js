@@ -3,6 +3,8 @@
 /*jslint es6 */
 /*global Headers, btoa*/
 
+let spreadsheet = {};
+
 // TODO: make URL and Authentication configurable.
 let jsonApiPrefix = 'http://localhost:8000/jsonapi/';
 let jsonApiHeaders = new Headers();
@@ -25,8 +27,9 @@ let widgetMap = {
 // TODO: sort the terms after an update.
 // TODO: jsonapi pagination support
 function updateDropdown(dropdown, termsPrefix, ...vocabs) {
+    let promises = [];
     vocabs.forEach(function (vocab) {
-        fetch(termsPrefix + vocab)
+        promises.push(fetch(termsPrefix + vocab)
             .then( (response) => response.json() )
             .then(function (jsonapiResponse) {
                 jsonapiResponse.data.forEach(function (term) {
@@ -39,8 +42,9 @@ function updateDropdown(dropdown, termsPrefix, ...vocabs) {
                         dropdown.push(term);
                     }
                 });
-            });
+            }));
     });
+    return promises;
 }
 
 // Populate content types dropdown
@@ -209,6 +213,7 @@ function loadViewsFields(restViewURI, jexcelConfig){
       console.log('View Data', viewData);
 
       columns = [];
+      dropdownPromises = [];
       Object.keys(viewFields).forEach(function(field) {
         // console.log('Processing field '+field);
             let column = {
@@ -244,7 +249,7 @@ function loadViewsFields(restViewURI, jexcelConfig){
                     if (typeof fieldSettings[field].settings.handler_settings.target_bundles !== 'undefined') {
                         targetType = fieldSettings[field].settings.handler.replace(/^(default:)/, '');
                         targetBundles = Object.keys(fieldSettings[field].settings.handler_settings.target_bundles);
-                        updateDropdown(dropdownSource, jsonApiPrefix + targetType + '/', ...targetBundles);
+                        dropdownPromises.push(...updateDropdown(dropdownSource, jsonApiPrefix + targetType + '/', ...targetBundles));
                     }
                 }
             } else if (field === 'nid') {
@@ -272,12 +277,11 @@ function loadViewsFields(restViewURI, jexcelConfig){
       console.log('Processed data', data);
       jexcelConfig.data = data;
       jexcelConfig.columns = columns;
-      // Using csv Headers will overwrite our titles;
-      // simply delete the first row after initialization.
-      // jexcelConfig.csvHeaders = false;
-      spreadsheet = jexcel(spreadsheetDiv, jexcelConfig);
-      // Deleting that first row of field machine names.
-      // spreadsheet.deleteRow(0); // Doesn't work because the CSV load won't be done by the time we hit this.
+
+      Promise.all(dropdownPromises).then(function(promises) {
+        spreadsheet = jexcel(spreadsheetDiv, jexcelConfig);
+      });
+
   });
 }
 
