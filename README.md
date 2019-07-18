@@ -12,6 +12,7 @@
 
 ## TODOs:
 
+- Support TypedRelation fields
 - CSV Import Wizard
 - Make JSON:API Endpoint and Drupal credentials configurable (currently using 'localhost:8000/jsonapi' and 'admin:islandora', respectively).
 - Lazy-loading/pagination support for [view-based tables](view.html).
