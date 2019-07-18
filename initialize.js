@@ -239,7 +239,7 @@ function loadViewsFields(restViewURI, jexcelConfig){
                 if (['autocomplete', 'dropdown'].includes(column.type)) {
                     dropdownSource = [];
                     column.source = dropdownSource;
-                    column.multiple = true;
+                    column.multiple = true; // @TODO: detect cardinality
                     // TODO: We don't yet support missing target_bundles (all bundles of type).
                     if (typeof fieldSettings[field].settings.handler_settings.target_bundles !== 'undefined') {
                         targetType = fieldSettings[field].settings.handler.replace(/^(default:)/, '');
