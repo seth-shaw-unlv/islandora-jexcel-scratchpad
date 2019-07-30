@@ -12,44 +12,22 @@
     <link rel="stylesheet" href="https://bossanova.uk/jexcel/v3/jexcel.css" type="text/css" />
 
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Material+Icons" />
+
     <style>
-    /* Courtesy of https://codeburst.io/how-to-create-a-simple-css-loading-spinner-make-it-accessible-e5c83c2e464c */
-    @keyframes spinner {
-        0% {
-            transform: translate3d(-50%, -50%, 0) rotate(0deg);
-        }
-        100% {
-             transform: translate3d(-50%, -50%, 0) rotate(360deg);
-        }
-    }
-    .spinner {
-        height: 100vh;  
-        position: relative;
-        transition: opacity linear 0.1s; 
-    }
-    .spinner::before {
-        animation: 2s linear infinite spinner;
-        border: solid 3px #eee;
-        border-bottom-color: #EF6565;
-        border-radius: 50%;
-        content: "";
-        height: 40px;
-        left: 25%;
-        position: absolute;
-        /* top: 50%; */
-        transform: translate3d(-50%, -50%, 0);
-        transform-origin: center;
-        width: 40px;
-        will-change: transform;
+    /* jLoading Spinner Text */
+    .jloading p {
+      background-color: white;
+      font-weight: bold;
     }
     </style>
+
   </head>
   <body>
     <h1>Testing <a href="https://bossanova.uk/jexcel/v3/">jExcel</a> for <a href="https://github.com/mjordan/islandora_workbench">Islandora Workbench</a></h1>
 
     <h2>The Spreadsheet</h2>
 
-    <div id="spreadsheet" role="alert" aria-live="assertive"><div class="spinner"><p class="js-loading-spinner">Loading the spreadsheet. Please wait...</p></div></div>
+    <div id="spreadsheet" role="alert" aria-live="assertive"><div id="jloading" class="jloading"><p>Loading the spreadsheet. Please wait...</p></div></div>
 
     <h2>Notes</h2>
     <p>
